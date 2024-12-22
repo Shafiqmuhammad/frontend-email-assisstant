@@ -206,8 +206,7 @@
 // };
 
 // export default EmailForm;
-
-'use client'
+'use client';
 
 import { useState } from 'react';
 
@@ -217,7 +216,7 @@ const EmailForm = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setError('');
@@ -245,7 +244,7 @@ const EmailForm = () => {
             const data = await response.json();
             setAnalysis(data);
         } catch (err) {
-            setError(err.message);
+            setError((err as Error).message);
             console.error('Error:', err);
         } finally {
             setLoading(false);
@@ -258,28 +257,28 @@ const EmailForm = () => {
                 <h2 className="text-2xl font-semibold mb-4">Email Assistant</h2>
                 <form onSubmit={handleSubmit}>
                     <textarea
-                        className="w-full p-2 border rounded"
-                        rows={6}
+                        className="w-full border border-gray-300 rounded-md p-2"
                         value={context}
                         onChange={(e) => setContext(e.target.value)}
-                        placeholder="Enter email context..."
+                        placeholder="Enter email context"
+                        rows={6}
                     />
                     <button
                         type="submit"
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
                         disabled={loading}
                     >
-                        {loading ? 'Loading...' : 'Generate'}
+                        {loading ? 'Generating...' : 'Generate Email Draft'}
                     </button>
                 </form>
                 {error && <p className="text-red-500 mt-2">{error}</p>}
+                {analysis && (
+                    <div className="mt-4">
+                        <h3 className="text-lg font-semibold">Generated Email:</h3>
+                        <pre className="bg-gray-100 p-4 rounded-md">{JSON.stringify(analysis, null, 2)}</pre>
+                    </div>
+                )}
             </div>
-            {analysis && (
-                <div className="bg-gray-100 rounded-lg shadow-sm p-6">
-                    <h3 className="text-xl font-semibold mb-2">Generated Analysis</h3>
-                    <p>{JSON.stringify(analysis, null, 2)}</p>
-                </div>
-            )}
         </div>
     );
 };
